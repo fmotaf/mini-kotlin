@@ -1,7 +1,6 @@
 import os
 import re
 
-
 TOKEN_SPEC = [
     ('FUN',      r'^fun\b'),
     ('VAL',      r'^val\b'),
@@ -37,7 +36,6 @@ TOKEN_SPEC = [
     ('COLON',    r'^:'),
     ('COMMA',    r'^,'),
     ('DOT',      r'^\.'),
-    ('COMMENT',  r'^//[^\n]*'),
     ('ID',       r'^[a-zA-Z_]\w*'),
     ('NEWLINE',  r'^\n'),
     ('SKIP',     r'^[ \t]+'),
