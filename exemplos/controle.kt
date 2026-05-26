@@ -6,4 +6,4 @@ fun main()
     println(aprovado)
   else
     if aprovado
-      println(parabens)
+      println("parabens")

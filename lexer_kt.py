@@ -20,11 +20,11 @@ TOKEN_SPEC = [
     ('TYPE',     r'^Int\b|^Double\b|^String\b|^Boolean\b|^Unit\b'),
     ('NUMBER',   r'^\d+(\.\d*)?'),
     ('STRING',   r'^"[^"]*"'),
-    ('ASSIGN',   r'^='),
     ('EQ',       r'^=='),
     ('NEQ',      r'^!='),
     ('GE',       r'^>='),
     ('LE',       r'^<='),
+    ('ASSIGN',   r'^='),
     ('GT',       r'^>'),
     ('LT',       r'^<'),
     ('PLUS',     r'^\+'),
@@ -72,7 +72,8 @@ def tokenize(codigo_fonte):
                         indent_stack.pop()
                         tokens.append(('DEDENT', '', linha, coluna))
                     if indent_stack and indent_stack[-1] != spaces:
-                        indent_stack.append(spaces)
+                        print(f"\n[ERRO LÉXICO] Linha {linha}, Coluna {coluna}: Indentação inconsistente ({spaces} espaços não correspondem a nenhum nível anterior)")
+                        return tokens
             line_start = False
 
         matched = False
@@ -83,10 +84,11 @@ def tokenize(codigo_fonte):
                 tok_len = len(value)
 
                 if tok_type == 'NEWLINE':
+                    coluna_newline = coluna
                     linha += 1
                     coluna = 1
                     line_start = True
-                    tokens.append(('NEWLINE', value, linha - 1, coluna))
+                    tokens.append(('NEWLINE', value, linha - 1, coluna_newline))
                 elif tok_type == 'COMMENT':
                     coluna += tok_len
                 elif tok_type == 'SKIP':

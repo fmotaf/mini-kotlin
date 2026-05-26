@@ -154,6 +154,4 @@ class SemanticAnalyzer:
             return self._infer_type(node.operand)
         if isinstance(node, FunCall):
             return '?'
-        if isinstance(node, PrintStmt):
-            return 'Unit'
         return '?'
