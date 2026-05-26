@@ -8,7 +8,6 @@ TOKEN_SPEC = [
     ('IF',       r'^if\b'),
     ('ELSE',     r'^else\b'),
     ('WHILE',    r'^while\b'),
-    ('FOR',      r'^for\b'),
     ('RETURN',   r'^return\b'),
     ('PRINTLN',  r'^println\b'),
     ('AND',      r'^and\b'),
