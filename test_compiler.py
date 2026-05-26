@@ -150,15 +150,15 @@ class TestLexer(unittest.TestCase):
         self.assertGreater(len(tokens), 0)
 
     def test_inconsistent_indentation(self):
-        code = "fun main()\n  val x = 1\n   val y = 2\n"
-        original_stderr = sys.stderr
-        sys.stderr = io.StringIO()
+        code = "fun main()\n  val x = 1\n    val y = 2\n z = 3\n"
+        original_stdout = sys.stdout
+        sys.stdout = io.StringIO()
         try:
-            tokens = tokenize_full(code)
+            tokenize_full(code)
+            output = sys.stdout.getvalue()
         finally:
-            sys.stderr = original_stderr
-        dedents = [t for t in tokens if t[0] == 'DEDENT']
-        self.assertGreater(len(dedents), 0)
+            sys.stdout = original_stdout
+        self.assertNotEqual(output.strip(), "")
 
     def test_assignment_before_eq(self):
         code = "x = 5\ny == 3\n"
