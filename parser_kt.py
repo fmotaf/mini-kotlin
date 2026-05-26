@@ -228,7 +228,7 @@ class Parser:
     def parse_unary_expr(self):
         if self.peek()[0] == 'MINUS':
             self.advance()
-            operand = self.parse_atom()
+            operand = self.parse_unary_expr()
             return UnaryOp('-', operand)
         return self.parse_atom()
 
