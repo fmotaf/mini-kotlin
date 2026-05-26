@@ -17,6 +17,25 @@ operadores lógicos textuais (`and`, `or`, `not`).
 
 ---
 
+## Ambiente Virtual (recomendado)
+
+```bash
+# Criar o ambiente virtual
+python3 -m venv venv
+
+# Ativar
+source venv/bin/activate    # Linux / macOS
+# venv\Scripts\activate     # Windows
+
+# Instalar dependências (pytest para rodar testes unitarios)
+pip install -r requirements.txt
+
+# Desativar quando terminar
+deactivate
+```
+
+---
+
 ## Como Executar
 
 ```bash
@@ -38,6 +57,24 @@ python3 main.py exemplos/strings.kt
 # Exemplos com erro (teste de detecção)
 python3 main.py exemplos/erro_semantico.kt
 python3 main.py exemplos/erro_sintatico.kt
+```
+
+---
+
+## Testes
+
+```bash
+# Executar todos os testes
+python3 -m unittest test_compiler -v
+
+# Ou com pytest (mais legível)
+python3 -m pytest test_compiler.py -v
+
+# Executar testes de uma categoria específica
+python3 -m pytest test_compiler.py -k "Lexer" -v
+python3 -m pytest test_compiler.py -k "Parser" -v
+python3 -m pytest test_compiler.py -k "Semantic" -v
+python3 -m pytest test_compiler.py -k "Integration" -v
 ```
 
 ---
