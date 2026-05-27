@@ -1,0 +1,144 @@
+╔══════════════════════════════════════════════════════════════╗
+║           ARQUITETURA DO MINI-COMPILADOR KOTLIN             ║
+╚══════════════════════════════════════════════════════════════╝
+
+                    ┌─────────────────────┐
+                    │   CÓDIGO FONTE      │
+                    │   (main.kt)         │
+                    └────────┬────────────┘
+                             │
+                             ▼
+               ┌─────────────────────────┐
+               │   FASE 1: LÉXICO        │
+               │   lexer_kt.py           │
+               │                         │
+               │   "Escaneia" o código   │
+               │   e divide em tokens    │
+               │   (palavras-chave,      │
+               │    operadores, números, │
+               │    identação → INDENT/  │
+               │    DEDENT, etc.)        │
+               │                         │
+               │   Erro léxico:          │
+               │   caractere inválido    │
+               └────────┬────────────────┘
+                        │ fluxo de tokens
+                        ▼
+               ┌─────────────────────────┐
+               │   FASE 2: SINTÁTICO     │
+               │   parser_kt.py          │
+               │                         │
+               │   Consome os tokens e   │
+               │   verifica a gramática  │
+               │   (descida recursiva)   │
+               │                         │
+               │   Reconhece: fun, if,   │
+               │   while, expr math,     │
+               │   precedência, etc.     │
+               │                         │
+               │   Erro sintático:       │
+               │   token inesperado      │
+               └────────┬────────────────┘
+                        │ Árvore Sintática Abstrata (AST)
+                        ▼
+               ┌─────────────────────────┐
+               │   FASE 3: AST           │
+               │   ast_kt.py             │
+               │                         │
+               │   Nós: Program,         │
+               │   FunDecl, VarDecl,     │
+               │   IfStmt, WhileStmt,    │
+               │   BinaryOp, Literal,    │
+               │   FunCall, etc.         │
+               │                         │
+               │   print_ast(): exibe    │
+               │   a árvore indentada    │
+               └────────┬────────────────┘
+                        │ AST
+                        ▼
+               ┌─────────────────────────┐
+               │   FASE 4: SEMÂNTICO     │
+               │   semantic_kt.py        │
+               │                         │
+               │   Percorre a AST e      │
+               │   valida significados:  │
+               │   • Variável declarada  │
+               │     antes do uso?       │
+               │   • Redeclaração no     │
+               │     mesmo escopo?       │
+               │                         │
+               │   Erro semântico:       │
+               │   variável não existe   │
+               └────────┬────────────────┘
+                        │
+                        ▼
+               ┌─────────────────────────┐
+               │   ORQUESTRADOR          │
+               │   main.py               │
+               │                         │
+               │   1. Lê o arquivo .kt   │
+               │   2. Chama lexer_kt     │
+               │   3. Chama parser_kt    │
+               │   4. Exibe a AST        │
+               │   5. Chama semantic_kt  │
+               └─────────────────────────┘
+
+
+═══════════════════════════════════════════════════════════════
+             FLUXO DE EXECUÇÃO (resumido)
+═══════════════════════════════════════════════════════════════
+
+  python3 main.py main.kt
+       │
+       ├── ler_arquivo_texto("main.kt")
+       │       ↓
+       │   "fun calcular(...)\n  var resultado = ..."
+       │
+       ├── tokenize(codigo)
+       │       ↓
+       │   [FUN], [ID], [LPAREN], [TYPE], ... , [INDENT], ...
+       │
+       ├── Parser(tokens).parse_program()
+       │       ↓
+       │   Program(FunDecl, VarDecl, WhileStmt, ...)
+       │
+       ├── print_ast(program)
+       │       ↓
+       │   AST exibida na tela
+       │
+       └── SemanticAnalyzer().analyze(program)
+               ↓
+           Erros semânticos (se houver)
+
+
+═══════════════════════════════════════════════════════════════
+         EXEMPLO DE FUNCIONAMENTO (rastreamento)
+═══════════════════════════════════════════════════════════════
+
+  Entrada:  val x = 10
+
+  Léxico  → [VAL] 'val' (L:1 C:1)
+             [ID]  'x'   (L:1 C:5)
+             [ASSIGN] '=' (L:1 C:7)
+             [NUMBER] '10' (L:1 C:9)
+
+  Sintático → VarDecl(kind='val', name='x', value=Literal(10, Int))
+
+  Semântico → "x" declarado no escopo atual. OK.
+
+═══════════════════════════════════════════════════════════════
+         REQUISITOS DO PROJETO ATENDIDOS
+═══════════════════════════════════════════════════════════════
+
+  [✔] Atribuição:  val/var x = expr
+  [✔] Matemática:  +, -, *, / com precedência e parênteses
+  [✔] Controle:    if/else, while (por indentação)
+  [✔] Relacionais: >, <, ==, !=
+  [✔] Lógicos:     and, or, not (proibido &&, ||, !)
+  [✔] Funções:     fun nome(params) ... (indentação)
+  [✔] Indentação:  INDENT/DEDENT ao invés de chaves {}
+  [✔] Tipos:       Int, Double, String, Boolean (inferidos)
+  [✔] Erro léxico: caractere inválido → linha/coluna
+  [✔] Erro sintático: token inesperado
+  [✔] Erro semântico: variável não declarada / redeclarada
+  [✔] AST:         árvore exibida na tela
